@@ -1,0 +1,10 @@
+body {
+  margin: 25px;
+}
+
+#map {
+  width: 900px;
+  height: 600px;
+  border: 1px solid silver;
+  background: #E6E6E6;
+}
