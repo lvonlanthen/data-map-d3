@@ -20,6 +20,18 @@ var projection = d3.geo.mercator()
 var path = d3.geo.path()
   .projection(projection);
 
+// We prepare an object to later have easier access to the data.
+var dataById = d3.map();
+
+// We create a quantize scale to categorize the values in 9 groups.
+// The domain is static and has a maximum of 100 (based on the
+// assumption that no value can be larger than 100%).
+// The scale returns text values which can be used for the color CSS
+// classes (q0-9, q1-9 ... q8-9)
+var quantize = d3.scale.quantize()
+    .domain([0, 100])
+    .range(d3.range(9).map(function(i) { return 'q' + i + '-9'; }));
+
 // Load the features from the GeoJSON.
 d3.json('data/ch_municipalities.geojson', function(error, features) {
 
@@ -31,18 +43,34 @@ d3.json('data/ch_municipalities.geojson', function(error, features) {
     .center(scaleCenter.center)
     .translate([width/2, height/2]);
 
-  // We add a <g> element to the SVG element and give it a class to
-  // style it later.
-  svg.append('g')
-      .attr('class', 'features')
-    // D3 wants us to select the (non-existing) path objects first ...
-    .selectAll('path')
-      // ... and then enter the data. For each feature, a <path> element
-      // is added.
-      .data(features.features)
-    .enter().append('path')
-      // As "d" attribute, we set the path of the feature.
-      .attr('d', path);
+  // Read the data for the cartogram
+  d3.csv('data/areastatistics.csv', function(data) {
+
+    // This maps the data of the CSV so it can be easily accessed by
+    // the ID of the municipality, for example: dataById[2196]
+    dataById = d3.nest()
+      .key(function(d) { return d.id; })
+      .rollup(function(d) { return d[0]; })
+      .map(data);
+
+    // We add a <g> element to the SVG element and give it a class to
+    // style it later. We also add a class name for Colorbrewer.
+    svg.append('g')
+        .attr('class', 'features YlGnBu')
+      // D3 wants us to select the (non-existing) path objects first ...
+      .selectAll('path')
+        // ... and then enter the data. For each feature, a <path>
+        // element is added.
+        .data(features.features)
+      .enter().append('path')
+        .attr('class', function(d) {
+          // Use the quantized value for the class
+          return quantize(dataById[d.properties.GMDNR].urban);
+        })
+        // As "d" attribute, we set the path of the feature.
+        .attr('d', path);
+
+  });
 
 });
 
