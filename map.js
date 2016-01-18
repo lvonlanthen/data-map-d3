@@ -1,3 +1,6 @@
+// We define a variable holding the current key to visualize on the map.
+var currentKey = 'urban';
+
 // We specify the dimensions for the map container. We use the same
 // width and height as specified in the CSS above.
 var width = 900,
@@ -23,14 +26,12 @@ var path = d3.geo.path()
 // We prepare an object to later have easier access to the data.
 var dataById = d3.map();
 
-// We create a quantize scale to categorize the values in 9 groups.
-// The domain is static and has a maximum of 100 (based on the
-// assumption that no value can be larger than 100%).
+// We prepare a quantize scale to categorize the values in 9 groups.
 // The scale returns text values which can be used for the color CSS
-// classes (q0-9, q1-9 ... q8-9)
+// classes (q0-9, q1-9 ... q8-9). The domain will be defined once the
+// values are known.
 var quantize = d3.scale.quantize()
-    .domain([0, 100])
-    .range(d3.range(9).map(function(i) { return 'q' + i + '-9'; }));
+  .range(d3.range(9).map(function(i) { return 'q' + i + '-9'; }));
 
 // Load the features from the GeoJSON.
 d3.json('data/ch_municipalities.geojson', function(error, features) {
@@ -52,6 +53,13 @@ d3.json('data/ch_municipalities.geojson', function(error, features) {
       .key(function(d) { return d.id; })
       .rollup(function(d) { return d[0]; })
       .map(data);
+
+    // Set the domain of the values (the minimum and maximum values of
+    // all values of the current key) to the quantize scale.
+    quantize.domain([
+      d3.min(data, function(d) { return getValueOfData(d); }),
+      d3.max(data, function(d) { return getValueOfData(d); })
+    ]);
 
     // We add a <g> element to the SVG element and give it a class to
     // style it later. We also add a class name for Colorbrewer.
@@ -109,4 +117,16 @@ function calculateScaleCenter(features) {
     'scale': scale,
     'center': center
   };
+}
+
+/**
+ * Helper function to access the (current) value of a data object.
+ *
+ * Use "+" to convert text values to numbers.
+ *
+ * @param {object} d - A data object representing an entry (one line) of
+ * the data CSV.
+ */
+function getValueOfData(d) {
+  return +d[currentKey];
 }
