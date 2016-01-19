@@ -1,10 +1,21 @@
 // We define a variable holding the current key to visualize on the map.
 var currentKey = 'urban';
 
+// Listen to changes of the dropdown to select the key to visualize on
+// the map.
+d3.select('#select-key').on('change', function(a) {
+  // Change the current key and call the function to update the colors.
+  currentKey = d3.select(this).property('value');
+  updateMapColors();
+});
+
 // We specify the dimensions for the map container. We use the same
 // width and height as specified in the CSS above.
 var width = 900,
     height = 600;
+
+// We define a variable to later hold the data of the CSV.
+var mapData;
 
 // We get and prepare the Mustache template, parsing it speeds up future uses
 var template = d3.select('#template').html();
@@ -69,19 +80,16 @@ d3.json('data/ch_municipalities.geojson', function(error, features) {
   // Read the data for the cartogram
   d3.csv('data/areastatistics.csv', function(data) {
 
+    // We store the data object in the variable which is accessible from
+    // outside of this function.
+    mapData = data;
+
     // This maps the data of the CSV so it can be easily accessed by
     // the ID of the municipality, for example: dataById[2196]
     dataById = d3.nest()
       .key(function(d) { return d.id; })
       .rollup(function(d) { return d[0]; })
       .map(data);
-
-    // Set the domain of the values (the minimum and maximum values of
-    // all values of the current key) to the quantize scale.
-    quantize.domain([
-      d3.min(data, function(d) { return getValueOfData(d); }),
-      d3.max(data, function(d) { return getValueOfData(d); })
-    ]);
 
     // We add the features to the <g> element created before.
     // D3 wants us to select the (non-existing) path objects first ...
@@ -90,10 +98,6 @@ d3.json('data/ch_municipalities.geojson', function(error, features) {
         // element is added.
         .data(features.features)
       .enter().append('path')
-        .attr('class', function(d) {
-          // Use the quantized value for the class
-          return quantize(getValueOfData(dataById[getIdOfFeature(d)]));
-        })
         // As "d" attribute, we set the path of the feature.
         .attr('d', path)
         // When the mouse moves over a feature, show the tooltip.
@@ -103,9 +107,31 @@ d3.json('data/ch_municipalities.geojson', function(error, features) {
         // When a feature is clicked, show the details of it.
         .on('click', showDetails);
 
+    // Call the function to update the map colors.
+    updateMapColors();
+
   });
 
 });
+
+/**
+ * Update the colors of the features on the map. Each feature is given a
+ * CSS class based on its value.
+ */
+function updateMapColors() {
+  // Set the domain of the values (the minimum and maximum values of
+  // all values of the current key) to the quantize scale.
+  quantize.domain([
+    d3.min(mapData, function(d) { return getValueOfData(d); }),
+    d3.max(mapData, function(d) { return getValueOfData(d); })
+  ]);
+  // Update the class (determining the color) of the features.
+  mapFeatures.selectAll('path')
+    .attr('class', function(f) {
+      // Use the quantized value for the class
+      return quantize(getValueOfData(dataById[getIdOfFeature(f)]));
+    });
+}
 
 /**
  * Show the details of a feature in the details <div> container.
