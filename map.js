@@ -17,6 +17,11 @@ var svg = d3.select('#map').append('svg')
 var mapFeatures = svg.append('g')
   .attr('class', 'features YlGnBu');
 
+// We add a <div> container for the tooltip, which is hidden by default.
+var tooltip = d3.select("#map")
+  .append("div")
+  .attr("class", "tooltip hidden");
+
 // Define the zoom and attach it to the map
 var zoom = d3.behavior.zoom()
   .scaleExtent([1, 10])
@@ -81,21 +86,42 @@ d3.json('data/ch_municipalities.geojson', function(error, features) {
       .enter().append('path')
         .attr('class', function(d) {
           // Use the quantized value for the class
-          return quantize(getValueOfData(dataById[d.properties.GMDNR]));
+          return quantize(getValueOfData(dataById[getIdOfFeature(d)]));
         })
         // As "d" attribute, we set the path of the feature.
-        .attr('d', path);
+        .attr('d', path)
+        // When the mouse moves over a feature, show the tooltip.
+        .on('mousemove', showTooltip);
 
   });
 
 });
 
 /**
+ * Show a tooltip with the name of the feature.
+ *
+ * @param {object} f - A GeoJSON Feature object.
+ */
+function showTooltip(f) {
+  // Get the ID of the feature.
+  var id = getIdOfFeature(f);
+  // Use the ID to get the data entry.
+  var d = dataById[id];
+  // Show the tooltip (unhide it) and set the name of the data entry.
+  tooltip.classed('hidden', false)
+    .html(d.name);
+}
+
+/**
  * Zoom the features on the map. This rescales the features on the map.
+ * Keep the stroke width proportional when zooming in.
  */
 function doZoom() {
   mapFeatures.attr("transform",
-    "translate(" + d3.event.translate + ") scale(" + d3.event.scale + ")");
+    "translate(" + d3.event.translate + ") scale(" + d3.event.scale + ")")
+    // Keep the stroke width proportional. The initial stroke width
+    // (0.5) must match the one set in the CSS.
+    .style("stroke-width", 0.5 / d3.event.scale + "px");
 }
 
 /**
@@ -145,4 +171,14 @@ function calculateScaleCenter(features) {
  */
 function getValueOfData(d) {
   return +d[currentKey];
+}
+
+/**
+ * Helper function to retrieve the ID of a feature. The ID is found in
+ * the properties of the feature.
+ *
+ * @param {object} f - A GeoJSON Feature object.
+ */
+function getIdOfFeature(f) {
+  return f.properties.GMDNR;
 }
