@@ -11,8 +11,38 @@
     <h3>Land use statistics map</h3>
     <div id="map"><!-- Map container --></div>
 
+    <div id="details" class="hidden"><!-- Details container --></div>
+
+    <!-- Mustache template, rendered later to show the details of a feature -->
+    <script id="template" type="x-tmpl-mustache">
+      <h3>{{ name }}</h3>
+      <table>
+        <tr>
+          <th>Total area:</th>
+          <td>{{ area }} km&sup2;</td>
+        </tr>
+        <tr>
+          <th>Urban area:</th>
+          <td>{{ urban }} %</td>
+        </tr>
+        <tr>
+          <th>Agricultural area:</th>
+          <td>{{ agriculture }} %</td>
+        </tr>
+        <tr>
+          <th>Forest area:</th>
+          <td>{{ forest }} %</td>
+        </tr>
+        <tr>
+          <th>Unproductive area:</th>
+          <td>{{ unproductive }} %</td>
+        </tr>
+      </table>
+    </script>
+
     <!-- JS libraries -->
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.2.1/mustache.min.js"></script>
 
     <!-- Custom JS code -->
     <script src="map.js"></script>

@@ -6,6 +6,10 @@ var currentKey = 'urban';
 var width = 900,
     height = 600;
 
+// We get and prepare the Mustache template, parsing it speeds up future uses
+var template = d3.select('#template').html();
+Mustache.parse(template);
+
 // We create a SVG element in the map container and give it some
 // dimensions.
 var svg = d3.select('#map').append('svg')
@@ -93,11 +97,34 @@ d3.json('data/ch_municipalities.geojson', function(error, features) {
         // When the mouse moves over a feature, show the tooltip.
         .on('mousemove', showTooltip)
         // When the mouse moves out of a feature, hide the tooltip.
-        .on('mouseout', hideTooltip);
+        .on('mouseout', hideTooltip)
+        // When a feature is clicked, show the details of it.
+        .on('click', showDetails);
 
   });
 
 });
+
+/**
+ * Show the details of a feature in the details <div> container.
+ * The content is rendered with a Mustache template.
+ *
+ * @param {object} f - A GeoJSON Feature object.
+ */
+function showDetails(f) {
+  // Get the ID of the feature.
+  var id = getIdOfFeature(f);
+  // Use the ID to get the data entry.
+  var d = dataById[id];
+
+  // Render the Mustache template with the data object and put the
+  // resulting HTML output in the details container.
+  var detailsHtml = Mustache.render(template, d);
+
+  // Put the HTML output in the details container and show (unhide) it.
+  d3.select('#details').html(detailsHtml);
+  d3.select('#details').classed("hidden", false);
+}
 
 /**
  * Show a tooltip with the name of the feature.
