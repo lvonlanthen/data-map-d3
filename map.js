@@ -11,10 +11,12 @@ var template = d3.select('#template').html();
 Mustache.parse(template);
 
 // We create a SVG element in the map container and give it some
-// dimensions.
+// dimensions. We can use a viewbox and preserve the aspect ratio. This
+// also allows a responsive map which rescales and looks good even on
+// different screen sizes
 var svg = d3.select('#map').append('svg')
-  .attr('width', width)
-  .attr('height', height);
+  .attr("preserveAspectRatio", "xMidYMid")
+  .attr("viewBox", "0 0 " + width + " " + height);
 
 // We add a <g> element to the SVG element and give it a class to
 // style. We also add a class name for Colorbrewer.
@@ -120,6 +122,9 @@ function showDetails(f) {
   // Render the Mustache template with the data object and put the
   // resulting HTML output in the details container.
   var detailsHtml = Mustache.render(template, d);
+
+  // Hide the initial container.
+  d3.select('#initial').classed("hidden", true);
 
   // Put the HTML output in the details container and show (unhide) it.
   d3.select('#details').html(detailsHtml);
