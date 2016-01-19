@@ -12,6 +12,17 @@ var svg = d3.select('#map').append('svg')
   .attr('width', width)
   .attr('height', height);
 
+// We add a <g> element to the SVG element and give it a class to
+// style. We also add a class name for Colorbrewer.
+var mapFeatures = svg.append('g')
+  .attr('class', 'features YlGnBu');
+
+// Define the zoom and attach it to the map
+var zoom = d3.behavior.zoom()
+  .scaleExtent([1, 10])
+  .on('zoom', doZoom);
+svg.call(zoom);
+
 // We define a geographical projection
 //     https://github.com/mbostock/d3/wiki/Geo-Projections
 // and set some dummy initial scale. The correct scale, center and
@@ -61,12 +72,9 @@ d3.json('data/ch_municipalities.geojson', function(error, features) {
       d3.max(data, function(d) { return getValueOfData(d); })
     ]);
 
-    // We add a <g> element to the SVG element and give it a class to
-    // style it later. We also add a class name for Colorbrewer.
-    svg.append('g')
-        .attr('class', 'features YlGnBu')
-      // D3 wants us to select the (non-existing) path objects first ...
-      .selectAll('path')
+    // We add the features to the <g> element created before.
+    // D3 wants us to select the (non-existing) path objects first ...
+    mapFeatures.selectAll('path')
         // ... and then enter the data. For each feature, a <path>
         // element is added.
         .data(features.features)
@@ -81,6 +89,14 @@ d3.json('data/ch_municipalities.geojson', function(error, features) {
   });
 
 });
+
+/**
+ * Zoom the features on the map. This rescales the features on the map.
+ */
+function doZoom() {
+  mapFeatures.attr("transform",
+    "translate(" + d3.event.translate + ") scale(" + d3.event.scale + ")");
+}
 
 /**
  * Calculate the scale factor and the center coordinates of a GeoJSON
