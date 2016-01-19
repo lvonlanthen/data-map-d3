@@ -73,7 +73,7 @@ d3.json('data/ch_municipalities.geojson', function(error, features) {
       .enter().append('path')
         .attr('class', function(d) {
           // Use the quantized value for the class
-          return quantize(dataById[d.properties.GMDNR].urban);
+          return quantize(getValueOfData(dataById[d.properties.GMDNR]));
         })
         // As "d" attribute, we set the path of the feature.
         .attr('d', path);
