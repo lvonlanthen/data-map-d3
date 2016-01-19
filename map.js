@@ -91,7 +91,9 @@ d3.json('data/ch_municipalities.geojson', function(error, features) {
         // As "d" attribute, we set the path of the feature.
         .attr('d', path)
         // When the mouse moves over a feature, show the tooltip.
-        .on('mousemove', showTooltip);
+        .on('mousemove', showTooltip)
+        // When the mouse moves out of a feature, hide the tooltip.
+        .on('mouseout', hideTooltip);
 
   });
 
@@ -107,9 +109,30 @@ function showTooltip(f) {
   var id = getIdOfFeature(f);
   // Use the ID to get the data entry.
   var d = dataById[id];
+
+  // Get the current mouse position (as integer)
+  var mouse = d3.mouse(d3.select('#map').node()).map(
+    function(d) { return parseInt(d); }
+  );
+
+  // Calculate the absolute left and top offsets of the tooltip. If the
+  // mouse is close to the right border of the map, show the tooltip on
+  // the left.
+  var left = Math.min(width - 4 * d.name.length, mouse[0] + 5);
+  var top = mouse[1] + 25;
+
   // Show the tooltip (unhide it) and set the name of the data entry.
+  // Set the position as calculated before.
   tooltip.classed('hidden', false)
+    .attr("style", "left:" + left + "px; top:" + top + "px")
     .html(d.name);
+}
+
+/**
+ * Hide the tooltip.
+ */
+function hideTooltip() {
+  tooltip.classed('hidden', true);
 }
 
 /**

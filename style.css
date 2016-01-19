@@ -6,6 +6,12 @@ body {
   font-weight: bold;
   padding: 0.5rem;
   border: 1px solid silver;
+  color: #222;
+  background: #fff;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px 0px #a6a6a6;
+  opacity: 0.9;
+  position: absolute;
 }
 
 .hidden {
