@@ -158,6 +158,16 @@ function showDetails(f) {
 }
 
 /**
+ * Hide the details <div> container and show the initial content instead.
+ */
+function hideDetails() {
+  // Hide the details
+  d3.select('#details').classed("hidden", true);
+  // Show the initial content
+  d3.select('#initial').classed("hidden", false);
+}
+
+/**
  * Show a tooltip with the name of the feature.
  *
  * @param {object} f - A GeoJSON Feature object.

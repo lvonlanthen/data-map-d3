@@ -32,12 +32,15 @@
           <li>Scroll in the map to zoom in and out.</li>
         </ul>
       </div>
+      <div class="footer">
+        <strong>Data sources</strong>: Data from the Swiss Federal Statistical Office, both the <a href="http://www.bfs.admin.ch/bfs/portal/de/index/dienstleistungen/geostat/datenbeschreibung/generalisierte_gemeindegrenzen.html" target="_blank">geographical data</a> and the <a href="http://www.bfs.admin.ch/bfs/portal/de/index/regionen/02/daten.html" target="_blank">statistical data</a>.
+      </div>
     </div>
 
     <!-- Mustache template, rendered later to show the details of a feature -->
     <script id="template" type="x-tmpl-mustache">
       <h3 class="six columns">{{ name }}</h3>
-      <table class="six columns">
+      <table class="five columns">
         <tr>
           <th>Total area:</th>
           <td>{{ area }} km&sup2;</td>
@@ -59,6 +62,7 @@
           <td>{{ unproductive }} %</td>
         </tr>
       </table>
+      <a href="#" id="close-details" class="one column" onclick="hideDetails(); return false;">&#x274c;</a>
     </script>
 
     <!-- JS libraries -->

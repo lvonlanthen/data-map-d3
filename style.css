@@ -37,6 +37,26 @@ td {
   width: 100%;
 }
 
+.footer {
+  border-top: 1px solid silver;
+  color: #888888;
+  font-size: 1.25rem;
+  text-align: center;
+  margin-top: 1rem;
+  padding: 0.5rem;
+}
+
+#close-details {
+  color: #FA5858;
+  text-decoration: none;
+  font-size: 4rem;
+  text-align: right;
+  line-height: 4.5rem;
+}
+#close-details:hover {
+  color: red;
+}
+
 #map {
   font-size: 0; /* to prevent margin at bottom of map container */
   border: 1px solid silver;
