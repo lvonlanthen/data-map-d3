@@ -18,6 +18,20 @@ body {
   display: none;
 }
 
+#details {
+  margin-top: 2rem;
+}
+
+table {
+  margin-bottom: 0;
+}
+td, th {
+  padding: 6px 9px;
+}
+td {
+  text-align: right;
+}
+
 #map {
   width: 900px;
   height: 600px;

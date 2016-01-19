@@ -4,19 +4,24 @@
     <meta charset="UTF-8">
     <title>Land use statistics map</title>
 
+    <!-- CSS libraries -->
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css" rel="stylesheet" type="text/css">
+
     <!-- Custom CSS styles -->
     <link href="style.css" rel="stylesheet" type="text/css">
   </head>
   <body>
-    <h3>Land use statistics map</h3>
-    <div id="map"><!-- Map container --></div>
+    <div class="container">
+      <h3>Land use statistics map</h3>
+      <div id="map"><!-- Map container --></div>
 
-    <div id="details" class="hidden"><!-- Details container --></div>
+      <div id="details" class="hidden row"><!-- Details container --></div>
+    </div>
 
     <!-- Mustache template, rendered later to show the details of a feature -->
     <script id="template" type="x-tmpl-mustache">
-      <h3>{{ name }}</h3>
-      <table>
+      <h3 class="six columns">{{ name }}</h3>
+      <table class="six columns">
         <tr>
           <th>Total area:</th>
           <td>{{ area }} km&sup2;</td>
