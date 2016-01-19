@@ -7,6 +7,8 @@ D3.js.
 
 The final result can be seen here: http://lvonlanthen.github.io/data-map-d3
 
+The code is available here: https://github.com/lvonlanthen/data-map-d3
+
 This tutorial was created for the webmap workshop being held on January 20-21 2016 at the University of Bern.
 
 
