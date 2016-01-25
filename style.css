@@ -63,6 +63,24 @@ td {
   background: #E6E6E6;
 }
 
+#legend {
+  border: 1px solid silver;
+  border-top: 0;
+}
+
+.legend-key path {
+  display: none;
+}
+
+.legend-key text {
+  font-size: 1rem;
+}
+
+.legend-key line {
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
 /* Thanks to http://colorbrewer2.org/ */
 .YlGnBu .q0-9{fill:rgb(255,255,217)}
 .YlGnBu .q1-9{fill:rgb(237,248,177)}
